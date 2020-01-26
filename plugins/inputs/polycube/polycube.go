@@ -10,8 +10,7 @@ import (
 )
 
 type PolycubeStats struct {
-    dmStatus        map[string]bool     // whether ddosmitigator active or not
-    lastDMStats     map[string]uint64
+    lastDMDropPkts     map[string]uint64   // key: node|dm|<src|dst>|ip
 
     Node                string      `toml:"node"`
     Ddosmitigatorlist   string      `toml:"ddosmitigatorlist"`
@@ -55,6 +54,23 @@ func (pc *PolycubeStats) Gather(acc telegraf.Accumulator) error {
         }
         for _, sbl := range sbl_list {
             fmt.Printf("%s: %d\n", sbl.Ip, sbl.DropPkts)
+            if len(pc.lastDMDropPkts) == 0 {
+                continue
+            }
+            key := pc.Node + "|" + dm + "|src|" + sbl.Ip
+            dropPkts := (uint64)(sbl.DropPkts) - pc.lastDMDropPkts[key]
+            pc.lastDMDropPkts[key] = (uint64)(sbl.DropPkts)
+
+            fields := map[string]interface{}{
+                "drop_pkts":    dropPkts,
+            }
+            tags := map[string]string{
+                "node": pc.Node,
+                "dm":   dm,
+                "dir":  "src",
+                "ip":   sbl.Ip,
+            }
+            acc.AddGauge("ddos", fields, tags)
         }
     }
 

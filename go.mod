@@ -49,6 +49,7 @@ require (
 	github.com/gogo/protobuf v1.2.2-0.20190723190241-65acae22fc9d
 	github.com/golang/mock v1.3.1-0.20190508161146-9fa652df1129 // indirect
 	github.com/golang/protobuf v1.3.2
+	github.com/goldenrye/go-polycube v0.0.0-20200123212108-b5f94ed626f9
 	github.com/google/go-cmp v0.3.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
