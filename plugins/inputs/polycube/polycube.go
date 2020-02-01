@@ -53,12 +53,16 @@ func (pc *PolycubeStats) Gather(acc telegraf.Accumulator) error {
             continue
         }
         for _, sbl := range sbl_list {
-            fmt.Printf("%s: %d\n", sbl.Ip, sbl.DropPkts)
-            if len(pc.lastDMDropPkts) == 0 {
+            key := pc.Node + "|" + dm + "|src|" + sbl.Ip
+            _, ok := pc.lastDMDropPkts[key]; if !ok {
+                pc.lastDMDropPkts[key] = (uint64)(sbl.DropPkts)
                 continue
             }
-            key := pc.Node + "|" + dm + "|src|" + sbl.Ip
             dropPkts := (uint64)(sbl.DropPkts) - pc.lastDMDropPkts[key]
+            if dropPkts == 0 {
+                continue
+            }
+            fmt.Printf("%s: %d\n", key, dropPkts)
             pc.lastDMDropPkts[key] = (uint64)(sbl.DropPkts)
 
             fields := map[string]interface{}{
@@ -80,6 +84,7 @@ func (pc *PolycubeStats) Gather(acc telegraf.Accumulator) error {
 func init() {
     inputs.Add("polycube", func() telegraf.Input {
         return &PolycubeStats{
+            lastDMDropPkts : make(map[string]uint64),
         }
     })
 }
