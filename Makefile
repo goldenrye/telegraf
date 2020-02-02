@@ -7,7 +7,7 @@ else
 	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
 endif
 
-PREFIX := /usr/local
+PREFIX := /opt/secnet
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git rev-parse --short HEAD)
 GOFILES ?= $(shell git ls-files '*.go')
@@ -46,6 +46,7 @@ go-install:
 install: telegraf
 	mkdir -p $(DESTDIR)$(PREFIX)/bin/
 	cp telegraf $(DESTDIR)$(PREFIX)/bin/
+	cp telegraf.conf $(DESTDIR)$(PREFIX)/conf/
 
 .PHONY: test
 test:
