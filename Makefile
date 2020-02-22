@@ -7,7 +7,7 @@ else
 	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
 endif
 
-PREFIX := /opt/secnet
+PREFIX := $(INSTALL_DIR)
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git rev-parse --short HEAD)
 GOFILES ?= $(shell git ls-files '*.go')
